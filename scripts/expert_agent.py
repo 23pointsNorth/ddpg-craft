@@ -9,16 +9,16 @@ def calculate_action(obs):
     *ms, ra, dist, angle = obs
     print('MS: ' + str(ms))
 
-    delta_angle = 180 / (len(ms) - 1)
+    delta_angle = 180. / (len(ms) - 1)
     ms_angles = [i * delta_angle - 90 for i in range(len(ms))]
 
     if any(m > -0.9 for m in ms) and \
-       -90 < math.degrees(angle * math.pi) and \
-       math.degrees(angle * math.pi) < 90:
-        dirs_error = [abs(msa - math.degrees(angle * math.pi)) for msa in ms_angles]
-        angle = math.radians(dirs_error.index(min(dirs_error))) / math.pi
+       (-90 < angle * 180.) and (angle * 180. < 90):
+        lambda_weight = 0.75
+        dirs_error = [abs(msa - lambda_weight * angle * 180.) for msa in ms_angles]
+        angle = math.radians(dirs_error.index(min(dirs_error)) * delta_angle - 90.) / math.pi
 
-    alt_error = ra - 450 / 3000
+    alt_error = ra - 600. / 3000
     pitch = -max(min(20 * alt_error, 1), -1)
     yaw = -angle
 
