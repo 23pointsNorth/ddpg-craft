@@ -24,7 +24,7 @@ class CriticNetwork(object):
         
         K.set_session(sess)
 
-        # Now create the model
+        # Create the model
         self.model, self.action, self.state = self.create_critic_network(state_size, action_size)  
         self.target_model, self.target_action, self.target_state = self.create_critic_network(state_size, action_size)  
         self.action_grads = tf.gradients(self.model.output, self.action)  #GRADIENTS for policy update
@@ -43,17 +43,16 @@ class CriticNetwork(object):
             critic_target_weights[i] = self.TAU * critic_weights[i] + (1 - self.TAU)* critic_target_weights[i]
         self.target_model.set_weights(critic_target_weights)
 
-    def create_critic_network(self, state_size,action_dim):
-        # print("Now we build the model")
+    def create_critic_network(self, state_size, action_dim):
         S = Input(shape=[state_size])  
-        A = Input(shape=[action_dim],name='action2')   
+        A = Input(shape=[action_dim], name='action2')   
         w1 = Dense(HIDDEN1_UNITS, activation='relu')(S)
         a1 = Dense(HIDDEN2_UNITS, activation='linear')(A) 
         h1 = Dense(HIDDEN2_UNITS, activation='linear')(w1)
-        h2 = add([h1,a1])
+        h2 = add([h1, a1])
         h3 = Dense(HIDDEN2_UNITS, activation='relu')(h2)
-        V = Dense(action_dim,activation='linear')(h3)   
-        model = Model(inputs=[S,A], outputs=V)
+        V = Dense(action_dim, activation='linear')(h3)   
+        model = Model(inputs=[S, A], outputs=V)
         adam = Adam(lr=self.LEARNING_RATE)
         model.compile(loss='mse', optimizer=adam)
         return model, A, S 

@@ -32,7 +32,7 @@ def handle_ep(observations, actions, rewards, infos):
         if len(a) == 0 or len(obs) == 0:
             continue
         # print(': {} {} {} {}'.format(obs, a, r, i))
-        print(': {} {}'.format(obs, a))
+        # print(': {} {}'.format(obs, a))
         # print(all_a.shape)
         # print(a.shape)
         # print(a)

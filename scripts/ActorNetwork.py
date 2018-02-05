@@ -23,7 +23,7 @@ class ActorNetwork(object):
 
         K.set_session(sess)
 
-        #Now create the model
+        # Create the model
         self.model , self.weights, self.state = self.create_actor_network(state_size, action_size)
         self.target_model, self.target_weights, self.target_state = self.create_actor_network(state_size, action_size) 
         self.action_gradient = tf.placeholder(tf.float32,[None, action_size])
@@ -45,15 +45,13 @@ class ActorNetwork(object):
             actor_target_weights[i] = self.TAU * actor_weights[i] + (1 - self.TAU)* actor_target_weights[i]
         self.target_model.set_weights(actor_target_weights)
 
-    def create_actor_network(self, state_size,action_dim):
-        # print("Now we build the model")
+    def create_actor_network(self, state_size, action_dim):
         S = Input(shape=[state_size])   
         h0 = Dense(HIDDEN1_UNITS, activation='relu')(S)
-        h1 = Dense(HIDDEN2_UNITS, activation='relu')(h0)
-        Yaw = Dense(1,activation='sigmoid',kernel_initializer=lambda shape:VarianceScaling(scale=1e-4)(shape))(h1)
-        Pitch = Dense(1,activation='sigmoid',kernel_initializer=lambda shape:VarianceScaling(scale=1e-4)(shape))(h1)
-        # Brake = Dense(1,activation='sigmoid',kernel_initializer=lambda shape:VarianceScaling(scale=1e-4)(shape))(h1)
-        V = Concatenate()([Yaw, Pitch])
+        h1 = Dense(HIDDEN2_UNITS, activation='linear')(h0)
+        Pitch = Dense(1, activation='tanh', kernel_initializer=lambda shape:VarianceScaling(scale=1e-4)(shape))(h1)
+        Yaw = Dense(1, activation='tanh', kernel_initializer=lambda shape:VarianceScaling(scale=1e-4)(shape))(h1)
+        V = Concatenate()([Pitch, Yaw])
         model = Model(inputs=S, outputs=V)
         return model, model.trainable_weights, S
 

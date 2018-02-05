@@ -5,9 +5,9 @@ import numpy as np
 import os
 from gym_recording.wrappers import TraceRecordingWrapper
 
-def calculate_action(obs):
+def calculate_expert_action(obs):
     *ms, ra, dist, angle = obs
-    print('MS: ' + str(ms))
+    print('MS: ' + str(ms) + '\r')
 
     delta_angle = 180. / (len(ms) - 1)
     ms_angles = [i * delta_angle - 90 for i in range(len(ms))]
@@ -30,14 +30,14 @@ def expert_agent():
     os.makedirs('./traces', exist_ok=True)
     env = TraceRecordingWrapper(env, directory='./traces/', buffer_batch_size=10)
     
-    ITERATIONS = 10
+    ITERATIONS = 50
 
     for x in range(ITERATIONS):
         obs = env.reset()
         done = False
         while not done:
                 env.render()
-                action = calculate_action(obs)
+                action = calculate_expert_action(obs)
                 print('Doing action: ', action, ' ', env.env._elapsed_steps, '\r')
                 obs, reward, done, info = env.step(action)
                 print('observations: ', obs, ' ', reward, ' ', done, '\r')
