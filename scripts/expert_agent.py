@@ -26,11 +26,11 @@ def calculate_expert_action(obs):
 
 
 def expert_agent():
-    env = gym.make('CoGLEM1-v0')
+    env = gym.make('CoGLEM1-virtual-v0')
     os.makedirs('./traces', exist_ok=True)
     env = TraceRecordingWrapper(env, directory='./traces/', buffer_batch_size=10)
     
-    ITERATIONS = 50
+    ITERATIONS = 10
 
     for x in range(ITERATIONS):
         obs = env.reset()
@@ -38,7 +38,7 @@ def expert_agent():
         while not done:
                 env.render()
                 action = calculate_expert_action(obs)
-                print('Doing action: ', action, ' ', env.env._elapsed_steps, '\r')
+                print('x: ',x, 'Doing action: ', action, ' ', env.env._elapsed_steps, '\r')
                 obs, reward, done, info = env.step(action)
                 print('observations: ', obs, ' ', reward, ' ', done, '\r')
 

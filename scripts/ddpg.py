@@ -35,12 +35,12 @@ def runSimulation(train_indicator=False, id=None, dagger_eps=.0):
     BATCH_SIZE = 64
     GAMMA = 0.99
     TAU = 0.001/10     # Target Network HyperParameters
-    LRA = 0.0001    # Learning rate for Actor
-    LRC = 0.001     # Lerning rate for Critic
+    LRA = 0.0001/10    # Learning rate for Actor
+    LRC = 0.001/10     # Lerning rate for Critic
     MODEL_DIR = './models'
     os.makedirs(MODEL_DIR, exist_ok=True)
 
-    env = gym.make('CoGLEM1-v0')
+    env = gym.make('CoGLEM1-virtual-v0')
 
     action_dim = env.action_space.shape[0]
     state_dim = env.observation_space.shape[0]
@@ -117,8 +117,9 @@ def runSimulation(train_indicator=False, id=None, dagger_eps=.0):
                     a_t_original = actor.model.predict(s_t.reshape(1, s_t.shape[0]))[0]
                     print('Original values:        {}\r'.format(a_t_original))
                     a_expert = calculate_expert_action(s_t)
+                    print('Expert values:          {}\r'.format(a_expert))
                     a_t_original[0] = a_expert[0] # FIX HEIGHT
-                    a_t_original[1] = a_expert[1] 
+                    # a_t_original[1] = a_expert[1] 
                     print('Fixed height to expert height.\r')
                 print('Original values:        {}\r'.format(a_t_original))
                 noise_t[0] = train_indicator * max(epsilon, 0) * OU.function(a_t_original[0],  0.2 , 0.5, 0.2)
